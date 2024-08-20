@@ -8,7 +8,7 @@ class CalendarFeed:
         pass
 
     def parseCal(self):
-        site = f"https://hcc.instructure.com/feeds/calendars/{userToken}.ics"
+        site = f"https://hcc.instructure.com/feeds/calendars/{self.userToken}.ics"
         today = datetime.date.today()
 
         print(site)
@@ -37,16 +37,21 @@ class CalendarFeed:
                 start = component.decoded("DTSTART")
                 start = start.strftime("%m/%d/%Y")
 
-                assignment [str(parts[0]).strip()] = {
+                assignment= {
+                    'title':str(parts[0]).strip(),
                     'course':parts[-1],
                     'description':description,
-                    'Due': start,
+                    'due_date': start,
                     'url':url,
+                    'status':'Not Submitted'
                 }
 
                 self.calendarFeed.append(assignment)
+        return self.calendarFeed
+
 
 userToken = 'user_QjCN6kSXrjOWIfGdYN5kFpHDdpTxooTfnDxVIvIT'
-cal = CalendarFeed(userToken)
-cal.parseCal()
-print(cal.calendarFeed)
+test = CalendarFeed(userToken)
+test.parseCal()
+for i in test.calendarFeed:
+    print(i['title'])
