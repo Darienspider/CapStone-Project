@@ -3,6 +3,12 @@ from tkinter import ttk
 import calendarFeed
 
 
+
+userToken = 'user_QjCN6kSXrjOWIfGdYN5kFpHDdpTxooTfnDxVIvIT'
+
+# TODO: GUI is not updating when converting to an exe
+
+
 class Application:
     def __init__(self, title):
         self.title = title
@@ -13,7 +19,6 @@ class Application:
         if self.assignment_panelisEnabled:
             # Initialize assignment data (you can replace this with database integration)
             self.setAssignments()
-            
             # Create UI elements
             self.create_widgets()
         else:
@@ -22,9 +27,7 @@ class Application:
     def requestToken(self):
         """ 
             Creates a frame that requests the user to enter their token. 
-            
             Preferably provides a screenshot of where to go to access the token (HCC Email Calendar)
-
         """
         self.token_frame = tk.Frame(self.window, padx=20,pady=20)
         self.token_frame.pack()
@@ -58,8 +61,8 @@ class Application:
             Parses calendar and returns the assignmens along with asssignment title, course, due date, and status of the assignment
         """
         # TODO: Allow user to enter their own token
-        cal = calendarFeed.CalendarFeed(self.userToken)
-        self.assignments = cal.parseCal()
+        self.cal = calendarFeed.CalendarFeed(self.userToken)
+        self.assignments = self.cal.parseCal()
         return self.assignments
 
     def create_widgets(self):
@@ -97,8 +100,8 @@ class Application:
             self.tree.item(selected_item, values=(item_values[0], item_values[1], item_values[2], "Submitted"))
             
             # TODO: Update database here if necessary
+            self.cal.updateFile()
             
-            print(self.assignments[item_index]['title'])
 
 
     def run(self):

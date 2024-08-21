@@ -1,7 +1,2 @@
-import calendarFeed
-
-
-userToken = 'user_QjCN6kSXrjOWIfGdYN5kFpHDdpTxooTfnDxVIvIT'
-cal = calendarFeed.CalendarFeed(userToken)
-extraction = cal.parseCal()
-print(extraction)
+import os 
+os.system('pyinstaller --add-data "calFeed.json;." GUI.py')
