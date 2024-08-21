@@ -3,25 +3,62 @@ from tkinter import ttk
 import calendarFeed
 
 
-
 class Application:
     def __init__(self, title):
         self.title = title
         self.window = tk.Tk()
         self.window.title(self.title)
         self.assignments = {}
-
-        # Initialize assignment data (you can replace this with database integration)
-        self.setAssignments()
-        
-        # Create UI elements
-        self.create_widgets()
+        self.assignment_panelisEnabled = False
+        if self.assignment_panelisEnabled:
+            # Initialize assignment data (you can replace this with database integration)
+            self.setAssignments()
+            
+            # Create UI elements
+            self.create_widgets()
+        else:
+            self.requestToken()
     
+    def requestToken(self):
+        """ 
+            Creates a frame that requests the user to enter their token. 
+            
+            Preferably provides a screenshot of where to go to access the token (HCC Email Calendar)
+
+        """
+        self.token_frame = tk.Frame(self.window, padx=20,pady=20)
+        self.token_frame.pack()
+
+        tk.Label(self.token_frame,text= "Please enter your token").pack()
+        self.token_entry = tk.Entry(self.token_frame)
+        self.token_entry.pack(pady=10)
+
+        # submit button
+        submit_button = ttk.Button (self.token_frame,text="Submit" ,command= self.on_token_submit)
+        submit_button.pack(pady=20)
+
+    def on_token_submit(self):
+        self.userToken =self.token_entry.get().strip()
+        # if token exists - destroy window and set up application
+        if self.userToken:
+            # Destroy the token request UI
+            self.token_frame.destroy()
+            # Proceed to initialize assignments and create widgets
+            self.assignment_panelisEnabled = True
+            self.setAssignments()
+            self.create_widgets()
+        else:
+            # Show an error message or handle invalid token scenario
+            tk.messagebox.showerror("Error", "Invalid token. Please try again.")
+
+        pass
+
     def setAssignments(self):
-        
+        """
+            Parses calendar and returns the assignmens along with asssignment title, course, due date, and status of the assignment
+        """
         # TODO: Allow user to enter their own token
-        userToken = 'user_QjCN6kSXrjOWIfGdYN5kFpHDdpTxooTfnDxVIvIT'
-        cal = calendarFeed.CalendarFeed(userToken)
+        cal = calendarFeed.CalendarFeed(self.userToken)
         self.assignments = cal.parseCal()
         return self.assignments
 
@@ -45,6 +82,9 @@ class Application:
         submit_button.pack(pady=10)
         
     def mark_as_submitted(self):
+        """
+        Function used to marked the selected assignment as completed
+        """
         selected_item = self.tree.focus()
         if selected_item:
             item_values = self.tree.item(selected_item, "values")
